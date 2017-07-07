@@ -16,7 +16,7 @@ const RootStackNavigator = StackNavigator(
       headerTitleStyle: {
         fontWeight: 'normal',
       },
-      headerTitle: "Hot and Cold - Geofencing Concept"
+      headerTitle: "Hot and Cold Geofencing Concept"
     }),
   }
 );

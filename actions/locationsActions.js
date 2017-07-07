@@ -11,5 +11,12 @@ export default locationsActions = {
             type: 'DELETE_MARKER',
             ID
         }
+    },
+    writeDistanceResults: (ID, distance)=>{
+        return{
+            type: 'WRITE_DISTANCE_RESULTS',
+            ID,
+            distance
+        }
     }
 }

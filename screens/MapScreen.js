@@ -4,6 +4,8 @@ import Expo from 'expo';
 import { connect } from 'react-redux';
 import actions from '../actions/actions';
 import Prompt from 'react-native-prompt';
+import shortid from 'shortid';
+import LocationMarker from '../components/LocationMarker';
 
 class MapScreen extends Component {
 
@@ -36,15 +38,13 @@ class MapScreen extends Component {
                 <Prompt
                     title="Location Name"
                     placeholder="Start typing"
-                    defaultValue={`Marker ${this.props.locations.length + 1}`}
+                    defaultValue={`Marker ${shortid.generate()}`}
                     visible={this.state.showNamePrompt}
                     onCancel={() => this.setState({
                         showNamePrompt: false,
                     })}
                     onSubmit={(value) => {
-                        let name = value ? value : 
-                        console.log('name: ' + name);
-                        this.createMarker(name);
+                        this.createMarker(value);
                         this.setState({
                             showNamePrompt: false,
                         })
@@ -58,25 +58,22 @@ class MapScreen extends Component {
                     showsMyLocationButton={true}
                     showsCompass={true}
                     followsUserLocation={true}
+                    onPress={this.onMapPressed.bind(this)}
                     initialRegion={{
-                        latitude: this.props.currentLocation.coords.latitude,
-                        longitude: this.props.currentLocation.coords.longitude,
+                        latitude: this.props.currentLocation.coords.latitude ?
+                            this.props.currentLocation.coords.latitude : 38.889931,
+                        longitude: this.props.currentLocation.coords.longitude ?
+                            this.props.currentLocation.coords.longitude : -77.0059,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
-                    }}
-                    onPress={this.onMapPressed.bind(this)}
-                >
+                    }}>
                     {
                         this.props.locations.map((location, index) => {
                             return (
-                                <Expo.MapView.Marker
+                                <LocationMarker
                                     key={index}
-                                    pinColor="blue"
-                                    coordinate={{
-                                        latitude: location.loc[0],
-                                        longitude: location.loc[1],
-                                    }}
-
+                                    pinColor={location.pinColor}
+                                    location={location}
                                 />
                             )
                         })

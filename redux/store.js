@@ -10,7 +10,17 @@ export let defaultState = {
                 longitude: -77.0059
             }
         },
-        locationWatchID: undefined
+    },
+    config:{
+        // 1 to 5 value of how many readings to average to calculate how close
+        // to indicate to the user
+        locationSensitivity: 1,
+        //seconds between checks
+        distanceCheckInterval: 5,
+        // argument is accuracy (in meters).
+        distanceCheckAccuracy: 1,
+        //precision in sub-meters (1 is meter presicion, 2 is decimeters, 3 is centimeters, etc).
+        distanceCheckPrecision: 1
     },
     locations: []
 };

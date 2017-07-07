@@ -1,13 +1,14 @@
 import { connect } from 'react-redux';
+import actions from './actions/actions';
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Location, Permissions, AppLoading } from 'expo';
 import { FontAwesome } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import { store } from './redux/store';
-
+import geolib from 'geolib';
 
 class AppContainer extends React.Component {
   state = {
@@ -17,9 +18,33 @@ class AppContainer extends React.Component {
   componentWillMount() {
     this._loadAssetsAsync();
     this.initLocationServices();
+    this.performLocationChecking();
   }
 
-
+  performLocationChecking() {
+    let that = this;
+    // check to see if the location has been set
+    if (this.props.appState.currentLocation.coords.latitude) {
+      const locationCheck = () => {
+        let currentLoc = that.props.appState.currentLocation.coords;
+        that.props.locations.forEach((location) => {
+          that.props.dispatch(actions.locationsActions.writeDistanceResults(
+            location.ID,
+            geolib.getDistance(
+              { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
+              { latitude: location.loc[0], longitude: location.loc[1] },
+              that.props.config.distanceCheckAccuracy,
+              that.props.config.distanceCheckPrecision
+            )
+          ));
+        });
+        console.log('check location');
+        setTimeout(locationCheck, that.props.config.distanceCheckInterval * 1000);
+      }
+      locationCheck();
+    }
+  }
+  
   initLocationServices() {
     const that = this;
     const action = actions.appStateActions; // cache the action so that it's available in the callback
@@ -127,7 +152,8 @@ function connectWithStore(store, WrappedComponent, ...args) {
 const mapStateToProps = (state) => {
   return Object.assign({}, {
     locations: state.locations,
-    appState: state.appState
+    appState: state.appState,
+    config: state.config,
   });
 }
 

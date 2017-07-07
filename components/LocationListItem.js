@@ -31,7 +31,7 @@ class LocationListItem extends Component {
                 }}>
                 <FontAwesome
                     name='map-marker'
-                    color={'purple'}
+                    color={this.props.location.pinColor}
                     size={48} />
                 <Text
                     style={{
