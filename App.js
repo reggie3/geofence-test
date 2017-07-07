@@ -41,11 +41,10 @@ class AppContainer extends React.Component {
         console.log("Error Watching Location", error);
       });
 
-    // console.log("removeFunction", { removeFunction });
     this.setState({ removeFunction })
   }
+
   async getLocationAsync() {
-    // const { Location, Permissions } = expo;
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === 'granted') {
       return Location.getCurrentPositionAsync({ enableHighAccuracy: false });
@@ -53,7 +52,6 @@ class AppContainer extends React.Component {
       throw new Error('Location permission not granted');
     }
   }
-
 
   async startWatchingLocation() {
     const that = this;

@@ -22,9 +22,9 @@ class MapScreen extends Component {
         })
     }
 
-    createMarker = (name, location) => {
+    createMarker = (name) => {
         this.props.dispatch(actions.locationsActions.setMarkerLocation(
-            this.state.name,
+            name,
             this.state.location
         ));
     }
@@ -36,21 +36,23 @@ class MapScreen extends Component {
                 <Prompt
                     title="Location Name"
                     placeholder="Start typing"
-                    defaultValue="Marker Name"
+                    defaultValue={`Marker ${this.props.locations.length + 1}`}
                     visible={this.state.showNamePrompt}
                     onCancel={() => this.setState({
                         showNamePrompt: false,
                     })}
                     onSubmit={(value) => {
-                        console.log('name: ' + value);
+                        let name = value ? value : 
+                        console.log('name: ' + name);
+                        this.createMarker(name);
                         this.setState({
                             showNamePrompt: false,
-                            name: value
-                        });
-                        this.createMarker();
+                        })
                     }} />
                 <Expo.MapView
-                    style={{ flex: 1 }}
+                    style={{
+                        flex: 1
+                    }}
                     provider="google"
                     showsUserLocation={true}
                     showsMyLocationButton={true}

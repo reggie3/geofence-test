@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Components } from 'expo';
 import { connect } from 'react-redux';
 import actions from '../actions/actions';
-import {FlatList, Text} from 'react-native';
-
+import {FlatList, Text, View} from 'react-native';
+import LocationListItem from '../components/LocationListItem'
 
 const LocationItem = (props) => {
     return(
@@ -15,15 +15,19 @@ class LocationsScreen extends Component {
 
     render() {
         return (
+            <View
+            style={{
+                padding: 10
+            }}>
            <FlatList
                 data={this.props.locations}
                 keyExtractor={(location, index) => index}
-                renderItem={({ item, index }) => <LocationItem
+                renderItem={({ item, index }) => <LocationListItem
                   key={index}
                   location={item} />
                 }
-
               />
+              </View>
         );
     }
 }
