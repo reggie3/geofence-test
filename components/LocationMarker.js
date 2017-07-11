@@ -13,15 +13,6 @@ class LocationMarker extends Component {
         };
     }
 
-    componentDidMount() {
-        Animated.timing(                  // Animate over time
-            this.state.fadeAnim,            // The animated value to drive
-            {
-                toValue: 1,                   // Animate to opacity: 1 (opaque)
-                duration: 10000,              // Make it take a while
-            }
-        ).start();                        // Starts the animation
-    }
 
     componentWillReceiveProps(nextProps) {
         // TODO: implement the average distance algorithm
@@ -44,19 +35,16 @@ class LocationMarker extends Component {
 
     render() {
         return (
-            <Animated.View                 // Special animatable View
-                style={{
-                    opacity: this.state.fadeAnim,         // Bind opacity to animated value
-                }}>
+
                 <Expo.MapView.Marker
                     key={this.props.key}
-                    pinColor={this.props.pinColor}
+                    image={require('../assets/images/usa-american-flag-waving-animated-gif-26.gif')}
                     coordinate={{
                         latitude: this.props.location.loc[0],
                         longitude: this.props.location.loc[1],
                     }}
                 />
-            </Animated.View>
+
         )
     }
 }
