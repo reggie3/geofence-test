@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import { View, Animated, StyleSheet, Dimensions, PixelRatio, Text } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 
@@ -9,12 +9,22 @@ class LocationMarker extends Component {
         super(props);
         this.state = {
             fadeAnim: new Animated.Value(0),  // Initial value for opacity: 0
-            bounceDuration: 1
+            bounceDuration: 1,
+            markerPosition: { x: 100, y: 100 }
         };
     }
 
+    componentWillMount = () => {
+        this.setState({ viewport: Dimensions.get('window') });
+        var { height, width } = Dimensions.get('window');
+        this.setState({
+            viewport: { width: width, height: height }
+        },
+            this.setMarkerPosition);
+    }
 
     componentWillReceiveProps(nextProps) {
+        this.setMarkerPosition();
         // TODO: implement the average distance algorithm
         let distanceSum = 0;
         let averageDistance = distanceSum / this.props.config.locationSensitivityDamping;
@@ -33,17 +43,50 @@ class LocationMarker extends Component {
         }
     }
 
-    render() {
-        return (
+    setMarkerPosition() {
+        // longitude of the right side of your map
+        let rightLongitude = this.props.region.longitude + (this.props.region.longitudeDelta / 2);
+        // longitude of the left side of your map
+        let leftLongitude = this.props.region.longitude - (this.props.region.longitudeDelta / 2);
+        // latitude of the top side of your map
+        let topLatitude = this.props.region.latitude - (this.props.region.latitudeDelta / 2);
+        // latitude of the bottom side of your map
+        let bottomLatitude = this.props.region.latitude + (this.props.region.latitudeDelta / 2);
 
-                <Expo.MapView.Marker
-                    key={this.props.key}
-                    image={require('../assets/images/usa-american-flag-waving-animated-gif-26.gif')}
-                    coordinate={{
-                        latitude: this.props.location.loc[0],
-                        longitude: this.props.location.loc[1],
-                    }}
-                />
+        // this.props.position contains the longitude/latitude of your marker  
+        // X position of your component in pixels
+        let left = (this.state.viewport.width / PixelRatio.get()
+            * (this.props.location.loc[1] - leftLongitude)
+            / (rightLongitude - leftLongitude))
+            - (this.state.viewport.width / PixelRatio.get() / 2);
+        // Y position of your component in pixels   
+        let top = ((this.state.viewport.height) / PixelRatio.get()
+            * (this.props.location.loc[0] - bottomLatitude)
+            / (topLatitude - bottomLatitude))
+            - (this.state.viewport.width / PixelRatio.get() / 2)
+            ;
+        let markerPosition = { x: left, y: top };
+        this.setState({
+            markerPosition: markerPosition
+        });
+        console.log(`postion set: ${markerPosition.x }, ${markerPosition.y}`);
+    }
+
+
+
+    render() {
+        
+        return (
+            <View
+                key={this.props.key}
+                style={{
+                    position: 'absolute',
+                    left: this.state.markerPosition.x,
+                    top: this.state.markerPosition.y
+                }}>
+                <Text
+                style={{color:'red'}}>Hello</Text>
+            </View>
 
         )
     }

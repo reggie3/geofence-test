@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 import actions from '../actions/actions';
@@ -12,6 +12,15 @@ class MapScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            initialRegion: {
+                latitude: this.props.currentLocation.coords.latitude ?
+                    this.props.currentLocation.coords.latitude : 38.889931,
+                longitude: this.props.currentLocation.coords.longitude ?
+                    this.props.currentLocation.coords.longitude : -77.0059,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            },
+            mapRegion: undefined,
             showNamePrompt: false,
             location: undefined,
             name: undefined
@@ -29,6 +38,10 @@ class MapScreen extends Component {
             name,
             this.state.location
         ));
+    }
+
+    regionChanged(mapRegion) {
+        this.setState({ mapRegion });
     }
 
     render() {
@@ -50,6 +63,7 @@ class MapScreen extends Component {
                         })
                     }} />
                 <Expo.MapView
+                    ref={(map) => { this.map = map; }}
                     style={{
                         flex: 1
                     }}
@@ -59,26 +73,23 @@ class MapScreen extends Component {
                     showsCompass={true}
                     followsUserLocation={true}
                     onPress={this.onMapPressed.bind(this)}
-                    initialRegion={{
-                        latitude: this.props.currentLocation.coords.latitude ?
-                            this.props.currentLocation.coords.latitude : 38.889931,
-                        longitude: this.props.currentLocation.coords.longitude ?
-                            this.props.currentLocation.coords.longitude : -77.0059,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}>
-                    {
-                        this.props.locations.map((location, index) => {
-                            return (
-                                <LocationMarker
-                                    key={index}
-                                    pinColor={location.pinColor}
-                                    location={location}
-                                />
-                            )
-                        })
-                    }
+                    initialRegion={this.state.initialRegion}
+                    onRegionChangeComplete={this.regionChanged.bind(this)}
+                    region={this.state.mapRegion}
+                >
                 </Expo.MapView>
+                {
+                    this.props.locations.map((location, index) => {
+                        return (
+                            <LocationMarker
+                                region={this.state.mapRegion}
+                                key={index}
+                                pinColor={location.pinColor}
+                                location={location}
+                            />
+                        )
+                    })
+                }
             </View>
         );
     }
