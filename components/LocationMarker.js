@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
-import AnimatedSprite from 'react-native-animated-sprite';
-import monsterSprite from '../assets/sprites/monster/monsterSprite';
+import TimerMixin from 'react-timer-mixin';
+var reactMixin = require('react-mixin');
+const monster1 = require('../assets/sprites/monster/monster_walk01.png')
+const monster2 = require('../assets/sprites/monster/monster_walk02.png')
+const monster3 = require('../assets/sprites/monster/monster_walk03.png')
+
 
 class LocationMarker extends Component {
     constructor(props) {
@@ -11,10 +15,28 @@ class LocationMarker extends Component {
         this.state = {
             fadeAnim: new Animated.Value(0),  // Initial value for opacity: 0
             bounceDuration: 1,
-             animationType: 'WALK',
+            imageCounter: 0,
+            sprites: [monster1, monster2, monster3],
+            loopSpeed: 1000
         };
     }
 
+
+    componentDidMount = () => {
+        const looper = () => {
+            let newCount =
+                console.log('looper image: ' + this.state.imageCounter);
+            this.setState({
+                imageCounter: this.state.imageCounter + 1
+            });
+
+            setTimeout(
+                looper,
+                100
+            );
+        }
+        looper();
+    }
 
     componentWillReceiveProps(nextProps) {
         // TODO: implement the average distance algorithm
@@ -22,16 +44,16 @@ class LocationMarker extends Component {
         let averageDistance = distanceSum / this.props.config.locationSensitivityDamping;
 
         if (nextProps.location < 10) {
-            this.setState({ bounceDuration: .5 });
+            this.setState({ loopSpeed: 10 });
         }
         else if (averageDistance < 100) {
-            this.setState({ bounceDuration: 1 });
+            this.setState({ loopSpeed: 100 });
         }
         else if (averageDistance < 1000) {
-            this.setState({ bounceDuration: 2 });
+            this.setState({ loopSpeed: 500 });
         }
         else if (averageDistance < 5000) {
-            this.setState({ bounceDuration: 3 });
+            this.setState({ loopSpeed: 1000 });
         }
     }
 
@@ -40,26 +62,12 @@ class LocationMarker extends Component {
 
             <Expo.MapView.Marker
                 key={this.props.key}
+                image={this.state.sprites[this.state.imageCounter % 3]}
                 coordinate={{
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
-                }}>
-                <AnimatedSprite
-                    ref={'monsterRef'}
-                    sprite={monsterSprite}
-                    animationFrameIndex={monsterSprite.animationIndex(this.state.animationType)}
-                    loopAnimation={true}
-                    coordinates={{
-                        top: 100,
-                        left: 100,
-                    }}
-                    size={{
-                        width: monsterSprite.size.width * 1.65,
-                        height: monsterSprite.size.height * 1.65,
-                    }}
-                    onPress={() => { this.onPress(); }}
-                />
-            </Expo.MapView.Marker>
+                }}
+            />
 
         )
     }
@@ -68,7 +76,7 @@ class LocationMarker extends Component {
 const mapStateToProps = (state) => {
     return Object.assign({}, {
         locations: state.locations,
-        config: state.locations,
+        config: state.config,
     });
 }
 const mapDispatchToProps = (dispatch) => {
@@ -77,4 +85,5 @@ const mapDispatchToProps = (dispatch) => {
     };
 }
 
+reactMixin(LocationMarker.prototype, TimerMixin);
 export default connect(mapStateToProps, mapDispatchToProps)(LocationMarker);
