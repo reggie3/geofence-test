@@ -29,7 +29,10 @@ class LocationListItem extends Component {
                     paddingHorizontal: 10,
                     alignItems: 'center'
                 }}>
-            
+            <FontAwesome
+                    name='map-marker'
+                    color={'purple'}
+                    size={40} />
                 <Text
                     style={{
                         fontSize: 18
