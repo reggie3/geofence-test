@@ -3,7 +3,7 @@ import { View, Animated, StyleSheet } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 import TimerMixin from 'react-timer-mixin';
-var reactMixin = require('react-mixin');
+const reactMixin = require('react-mixin');
 const monster1 = require('../assets/sprites/monster/monster_walk01.png')
 const monster2 = require('../assets/sprites/monster/monster_walk02.png')
 const monster3 = require('../assets/sprites/monster/monster_walk03.png')
@@ -23,18 +23,17 @@ class LocationMarker extends Component {
 
 
     componentDidMount = () => {
-        const looper = () => {
-            let newCount =
-            this.setState({
-                imageCounter: this.state.imageCounter + 1
-            });
-            setTimeout(
-                looper,
-                this.state.loopSpeed
-            );
-        }
-        looper();
+        setInterval(
+            this.animationLooper.bind(this),
+            this.state.loopSpeed);
     }
+
+    animationLooper = () => {
+        this.setState({
+            imageCounter: this.state.imageCounter + 1
+        });
+    }
+
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {

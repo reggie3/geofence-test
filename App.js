@@ -9,6 +9,8 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import geolib from 'geolib';
+import TimerMixin from 'react-timer-mixin';
+const reactMixin = require('react-mixin');
 
 class AppContainer extends React.Component {
   state = {
@@ -18,34 +20,33 @@ class AppContainer extends React.Component {
   componentWillMount() {
     this._loadAssetsAsync();
     this.initLocationServices();
-    this.performLocationChecking();
+    // periodically check device location and write the results to 
+    // the location markers
+    setInterval(
+      this.performLocationChecking.bind(this),
+      1000);
   }
 
   performLocationChecking() {
-    let that = this;
-    // check to see if the location has been set
     if (this.props.appState.currentLocation.coords.latitude) {
-      const locationCheck = () => {
-        let currentLoc = that.props.appState.currentLocation.coords;
-        that.props.locations.forEach((location) => {
-          that.props.dispatch(actions.locationsActions.writeDistanceResults(
+        let currentLoc = this.props.appState.currentLocation.coords;
+        // for each location marker, perform work in its reducer that stores the distance
+        // from the device to the location
+        this.props.locations.forEach((location) => {
+          this.props.dispatch(actions.locationsActions.writeDistanceResults(
             location.ID,
             geolib.getDistance(
               { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
               { latitude: location.loc[0], longitude: location.loc[1] },
-              that.props.config.distanceCheckAccuracy,
-              that.props.config.distanceCheckPrecision
+              this.props.config.distanceCheckAccuracy,
+              this.props.config.distanceCheckPrecision
             ),
             this.props.config.locationSensitivityDamping
           ));
         });
-        console.log('check location');
-        setTimeout(locationCheck, that.props.config.distanceCheckInterval * 1000);
-      }
-      locationCheck();
     }
   }
-  
+
   initLocationServices() {
     const that = this;
     const action = actions.appStateActions; // cache the action so that it's available in the callback
@@ -159,6 +160,7 @@ const mapStateToProps = (state) => {
 }
 
 const App = connectWithStore(store, AppContainer, mapStateToProps);
+reactMixin(App.prototype, TimerMixin);
 export default App;
 
 const styles = StyleSheet.create({
