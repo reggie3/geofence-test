@@ -8,21 +8,21 @@ import { FontAwesome } from '@expo/vector-icons';
 
 
 
-const MIN_MARKER_SIZE=32;
-const MAX_MARKER_SIZE=48;
+const MIN_MARKER_SIZE = 28;
+const MAX_MARKER_SIZE = 48;
 class LocationMarker extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            imageCounter: 0,
             markerGrowthSpeed: 0,
             size: MIN_MARKER_SIZE,
-            then: Date.now()
+            then: Date.now(),
+            growthSwitch: "grow"
         };
     }
 
     componentDidMount = () => {
-        requestAnimationFrame(this.animationLooper.bind(this));
+        this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
     animationLooper = () => {
@@ -30,23 +30,30 @@ class LocationMarker extends Component {
         let deltaTime = now - this.state.then;
         let growth = deltaTime / 1000 * this.state.markerGrowthSpeed;
 
-        let growthSwitch = 1;
-        if(this.state.size+growth >MAX_MARKER_SIZE){
-            growthSwitch = -1;
+        let newSize;
+        if (this.state.growthSwitch === 'shrink') {
+            newSize = this.state.size - growth;
+
         }
-        else if(this.state.size-growth <MIN_MARKER_SIZE){
-            growthSwitch = 1;
+        else if (this.state.growthSwitch === 'grow') {
+            newSize = this.state.size + growth;
         }
         else{
-            console.log('no growthswitch change');
+            console.log("error");
         }
-        let newSize = this.state.size + (growth * growthSwitch);
+        //console.log("size: " + newSize);
+        let newGrowthSwitch = newSize > MAX_MARKER_SIZE ? "shrink" :
+            newSize < MIN_MARKER_SIZE ? "grow" : this.state.growthSwitch;
+        //console.log("newGrowthSwitch: " + newGrowthSwitch);
+
+
         this.setState({
             size: newSize,
-            then: now
+            then: now,
+            growthSwitch: newGrowthSwitch
         });
 
-        requestAnimationFrame(this.animationLooper.bind(this));
+        this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
     createMarkerArray = (pinColor) => {
@@ -67,16 +74,16 @@ class LocationMarker extends Component {
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {
-            this.setState({ markerGrowthSpeed: 4 });
+            this.setState({ markerGrowthSpeed: 80 });
         }
         else if (nextProps.location.distanceAverage < 100) {
-            this.setState({ markerGrowthSpeed: 3 });
+            this.setState({ markerGrowthSpeed: 40 });
         }
         else if (nextProps.location.distanceAverage < 1000) {
-            this.setState({ markerGrowthSpeed: 2 });
+            this.setState({ markerGrowthSpeed:20 });
         }
         else if (nextProps.location.distanceAverage < 5000) {
-            this.setState({ markerGrowthSpeed: 1 });
+            this.setState({ markerGrowthSpeed: 10 });
         }
     }
 
@@ -89,7 +96,7 @@ class LocationMarker extends Component {
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
                 }}>
-                 <FontAwesome
+                <FontAwesome
                     name='map-marker'
                     color={this.props.location.pinColor}
                     size={this.state.size}

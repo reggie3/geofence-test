@@ -1,6 +1,9 @@
 import uuid from 'uuid/v1';
 const colors = ['red', 'green', 'blue', 'orange', 'yellow'];
 
+const MIN_MARKER_SIZE = 28;
+const MAX_MARKER_SIZE = 48;
+
 export default function locations(locations = {}, action) {
     switch (action.type) {
         case 'SET_MARKER_LOCATION':
@@ -10,7 +13,12 @@ export default function locations(locations = {}, action) {
                 loc: [action.coords.latitude, action.coords.longitude],
                 distances: [],
                 pinColor: colors[Math.floor(Math.random() * colors.length)],
-                touched: false
+                touched: false,
+                animation: {
+                    size: MIN_MARKER_SIZE,
+                    then: Date.now(),
+                    growthSwitch: "grow"
+                }
             });
         case 'DELETE_MARKER':
             return locations.filter((location) => {
@@ -33,6 +41,10 @@ export default function locations(locations = {}, action) {
                 }
                 return location;
             })
+
+            case 'UPDATE_MARKER_FOR_RENDER':
+            return location;
+            
         default:
             return locations;
     }
