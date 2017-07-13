@@ -1,37 +1,30 @@
 import React, { Component } from 'react';
-import {
-    View, Animated, StyleSheet,
-    Easing
-} from 'react-native';
+import { View, Animated, StyleSheet } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
-import TimerMixin from 'react-timer-mixin';
-const reactMixin = require('react-mixin');
 import { FontAwesome } from '@expo/vector-icons';
-
-
+var tweenState = require('react-tween-state');
+tweenState.Mixin
+import TimerMixin from 'react-timer-mixin';
+var reactMixin = require('react-mixin');
 
 const MIN_MARKER_SIZE = 32;
 const MAX_MARKER_SIZE = 48;
 class LocationMarker extends Component {
-    constructor() {
-        super()
-        this.spinValue = new Animated.Value(0)
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
     }
-    componentDidMount() {
-        this.spin()
+
+    componentDidMount = () => {
+        this.tweenState('size', {
+            easing: tweenState.easingTypes.easeInOutQuad,
+            duration: 500,
+            endValue: this.state.size === MIN_MARKER_SIZE ? MAX_MARKER_SIZE : MIN_MARKER_SIZE
+        });
     }
-    spin() {
-        this.spinValue.setValue(0)
-        Animated.timing(
-            this.spinValue,
-            {
-                toValue: 1,
-                duration: 1000,
-                easing: Easing.linear
-            }
-        ).start(() => this.spin())
-    }
+
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {
@@ -49,27 +42,24 @@ class LocationMarker extends Component {
     }
 
     render() {
-        const spin = this.spinValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0deg', '360deg']
-        });
+
+        let size = this.getTweeningValue('size')
 
         return (
+
             <Expo.MapView.Marker
                 key={this.props.key}
                 coordinate={{
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
                 }}>
-                <Animated.View
-                    style={{ transform: [{ rotate: spin }] }}>
-                    <FontAwesome
-                        name='map-marker'
-                        color={this.props.location.pinColor}
-                        size={32}
-                    />
-                </Animated.View>
+                <FontAwesome
+                    name='map-marker'
+                    color={this.props.location.pinColor}
+                    size={size}
+                />
             </Expo.MapView.Marker>
+
         )
     }
 }
