@@ -44,14 +44,15 @@ class LocationMarker extends Component {
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
                 }}>
+                <View>
                 <AnimatedSprite
                     ref={'monsterRef'}
                     sprite={monsterSprite}
                     animationFrameIndex={monsterSprite.animationIndex(this.state.animationType)}
                     loopAnimation={true}
                     coordinates={{
-                        top: 100,
-                        left: 100,
+                        top: 0,
+                        left: 0,
                     }}
                     size={{
                         width: monsterSprite.size.width * 1.65,
@@ -59,6 +60,7 @@ class LocationMarker extends Component {
                     }}
                     onPress={() => { this.onPress(); }}
                 />
+                </View>
             </Expo.MapView.Marker>
 
         )
