@@ -25,34 +25,28 @@ class LocationMarker extends Component {
     componentDidMount = () => {
         const looper = () => {
             let newCount =
-                console.log('looper image: ' + this.state.imageCounter);
             this.setState({
                 imageCounter: this.state.imageCounter + 1
             });
-
             setTimeout(
                 looper,
-                100
+                this.state.loopSpeed
             );
         }
         looper();
     }
 
     componentWillReceiveProps(nextProps) {
-        // TODO: implement the average distance algorithm
-        let distanceSum = 0;
-        let averageDistance = distanceSum / this.props.config.locationSensitivityDamping;
-
-        if (nextProps.location < 10) {
+        if (nextProps.location.distanceAverage < 10) {
             this.setState({ loopSpeed: 10 });
         }
-        else if (averageDistance < 100) {
+        else if (nextProps.location.distanceAverage < 100) {
             this.setState({ loopSpeed: 100 });
         }
-        else if (averageDistance < 1000) {
+        else if (nextProps.location.distanceAverage < 1000) {
             this.setState({ loopSpeed: 500 });
         }
-        else if (averageDistance < 5000) {
+        else if (nextProps.location.distanceAverage < 5000) {
             this.setState({ loopSpeed: 1000 });
         }
     }
@@ -75,7 +69,6 @@ class LocationMarker extends Component {
 
 const mapStateToProps = (state) => {
     return Object.assign({}, {
-        locations: state.locations,
         config: state.config,
     });
 }

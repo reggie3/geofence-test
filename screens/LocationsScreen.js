@@ -5,12 +5,6 @@ import actions from '../actions/actions';
 import {FlatList, Text, View} from 'react-native';
 import LocationListItem from '../components/LocationListItem'
 
-const LocationItem = (props) => {
-    return(
-        <Text>Location Item</Text>
-    )
-}
-
 class LocationsScreen extends Component {
 
     render() {

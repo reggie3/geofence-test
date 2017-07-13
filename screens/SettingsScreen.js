@@ -13,14 +13,14 @@ class SettingsScreen extends React.Component {
       <ScrollView style={styles.container}>
         <View style={styles.configItemView}>
           <Text style={styles.configLabel}>
-            Location Sensitivity
+            Location Sensitivity Damping
         </Text>
           <Slider
             maximumValue={5}
             minimumValue={1}
             step={1}
             onValueChange={(itemValue, itemIndex) => {
-              this.props.dispatch(actions.configActions.setLocationSenstivity(itemValue))
+              this.props.dispatch(actions.configActions.setLocationSensitivityDamping(itemValue))
             }} />
           <Text
             style={styles.sliderValue}>

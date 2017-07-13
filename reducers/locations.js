@@ -19,10 +19,16 @@ export default function locations(locations = {}, action) {
         case 'WRITE_DISTANCE_RESULTS':
             return locations.map((location) => {
                 if (location.ID === action.ID) {
+                    let distances = [action.distance].concat(location.distances);
+                    distances = distances.slice(0, action.locationArrayMaxLength);
+                    let distanceAverage = distances.reduce(function (sum, value) {
+                        return sum + value;
+                    }, 0) / distances.length;
                     return Object.assign({},
                         location,
                         {
-                            distances: [action.distance].concat(location.distances)
+                            distances,
+                            distanceAverage
                         });
                 }
                 return location;

@@ -12,11 +12,12 @@ export default locationsActions = {
             ID
         }
     },
-    writeDistanceResults: (ID, distance)=>{
+    writeDistanceResults: (ID, distance, locationArrayMaxLength)=>{
         return{
             type: 'WRITE_DISTANCE_RESULTS',
             ID,
-            distance
+            distance,
+            locationArrayMaxLength
         }
     }
 }

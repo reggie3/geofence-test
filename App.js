@@ -35,7 +35,8 @@ class AppContainer extends React.Component {
               { latitude: location.loc[0], longitude: location.loc[1] },
               that.props.config.distanceCheckAccuracy,
               that.props.config.distanceCheckPrecision
-            )
+            ),
+            this.props.config.locationSensitivityDamping
           ));
         });
         console.log('check location');

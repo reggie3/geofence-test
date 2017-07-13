@@ -29,15 +29,18 @@ class LocationListItem extends Component {
                     paddingHorizontal: 10,
                     alignItems: 'center'
                 }}>
-                <FontAwesome
-                    name='map-marker'
-                    color={this.props.location.pinColor}
-                    size={48} />
+            
                 <Text
                     style={{
-                        fontSize: 24
+                        fontSize: 18
                     }}>
                     {this.props.location.name}
+                </Text>
+                <Text
+                    style={{
+                        fontSize: 16
+                    }}>
+                    {Math.round(this.props.location.distanceAverage)} meters
                 </Text>
                 <TouchableHighlight
                     activeOpacity={.5}
