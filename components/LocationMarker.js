@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import {
+    View, Animated, StyleSheet,
+    Easing
+} from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 import TimerMixin from 'react-timer-mixin';
@@ -8,63 +11,28 @@ import { FontAwesome } from '@expo/vector-icons';
 
 
 
-const MIN_MARKER_SIZE=32;
-const MAX_MARKER_SIZE=48;
+const MIN_MARKER_SIZE = 32;
+const MAX_MARKER_SIZE = 48;
 class LocationMarker extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            imageCounter: 0,
-            markerGrowthSpeed: 0,
-            size: MIN_MARKER_SIZE,
-            then: Date.now()
-        };
+    constructor() {
+        super()
+        this.spinValue = new Animated.Value(0)
+    }
+    componentDidMount() {
+        this.spin()
+    }
+    spin() {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.linear
+            }
+        ).start(() => this.spin())
     }
 
-    componentDidMount = () => {
-        requestAnimationFrame(this.animationLooper.bind(this));
-    }
-
-    animationLooper = () => {
-        let now = Date.now();
-        let deltaTime = now - this.state.then;
-        let growth = deltaTime / 1000 * this.state.markerGrowthSpeed;
-
-        let growthSwitch = 1;
-        if(this.state.size+growth >MAX_MARKER_SIZE){
-            growthSwitch = -1;
-        }
-        else if(this.state.size-growth <MIN_MARKER_SIZE){
-            growthSwitch = 1;
-        }
-        else{
-            console.log('no growthswitch change');
-        }
-        let newSize = this.state.size + (growth * growthSwitch);
-        this.setState({
-            size: newSize,
-            then: now
-        });
-
-        requestAnimationFrame(this.animationLooper.bind(this));
-    }
-
-    createMarkerArray = (pinColor) => {
-        let markerArray = [];
-
-        for (let i = 0; i < 10; i++) {
-            markerArray.push(
-                <FontAwesome
-                    name='map-marker'
-                    color={this.props.location.pinColor}
-                    size={this.state.size}
-                />
-            )
-        }
-        debugger;
-        return markerArray;
-
-    }
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {
             this.setState({ markerGrowthSpeed: 4 });
@@ -81,21 +49,27 @@ class LocationMarker extends Component {
     }
 
     render() {
-        return (
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        });
 
+        return (
             <Expo.MapView.Marker
                 key={this.props.key}
                 coordinate={{
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
                 }}>
-                 <FontAwesome
-                    name='map-marker'
-                    color={this.props.location.pinColor}
-                    size={this.state.size}
-                />
+                <Animated.View
+                    style={{ transform: [{ rotate: spin }] }}>
+                    <FontAwesome
+                        name='map-marker'
+                        color={this.props.location.pinColor}
+                        size={32}
+                    />
+                </Animated.View>
             </Expo.MapView.Marker>
-
         )
     }
 }
