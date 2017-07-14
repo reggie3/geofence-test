@@ -5,9 +5,6 @@ import actions from '../actions/actions';
 import { Text, View, TouchableHighlight } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-
-
-
 class LocationListItem extends Component {
 
     deleteMarker = () => {

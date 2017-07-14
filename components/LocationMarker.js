@@ -22,7 +22,7 @@ class LocationMarker extends Component {
     }
 
     componentDidMount = () => {
-        this.requestAnimationFrame(this.animationLooper.bind(this));
+        let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
     animationLooper = () => {
@@ -32,18 +32,18 @@ class LocationMarker extends Component {
 
         let newSize;
         if (this.state.growthSwitch === 'shrink') {
-            newSize = this.state.size - growth;
+            newSize = Math.max(this.state.size - growth, MIN_MARKER_SIZE);
 
         }
         else if (this.state.growthSwitch === 'grow') {
-            newSize = this.state.size + growth;
+            newSize = Math.min(this.state.size + growth, MAX_MARKER_SIZE);
         }
         else{
             console.log("error");
         }
         //console.log("size: " + newSize);
-        let newGrowthSwitch = newSize > MAX_MARKER_SIZE ? "shrink" :
-            newSize < MIN_MARKER_SIZE ? "grow" : this.state.growthSwitch;
+        let newGrowthSwitch = newSize >= MAX_MARKER_SIZE ? "shrink" :
+            newSize <= MIN_MARKER_SIZE ? "grow" : this.state.growthSwitch;
         //console.log("newGrowthSwitch: " + newGrowthSwitch);
 
 
@@ -74,7 +74,7 @@ class LocationMarker extends Component {
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {
-            this.setState({ markerGrowthSpeed: 80 });
+            this.setState({ markerGrowthSpeed: 120 });
         }
         else if (nextProps.location.distanceAverage < 100) {
             this.setState({ markerGrowthSpeed: 40 });
