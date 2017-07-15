@@ -23,7 +23,7 @@ class LocationMarker extends Component {
 
 
     componentDidMount = () => {
-        setInterval(
+        setTimeout(
             this.animationLooper.bind(this),
             this.state.loopSpeed);
     }
@@ -32,14 +32,17 @@ class LocationMarker extends Component {
         this.setState({
             imageCounter: this.state.imageCounter + 1
         });
+        setTimeout(
+            this.animationLooper.bind(this),
+            this.state.loopSpeed);
     }
 
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.location.distanceAverage < 10) {
-            this.setState({ loopSpeed: 10 });
+        if (nextProps.location.distanceAverage < 100) {
+            this.setState({ loopSpeed: 5 });
         }
-        else if (nextProps.location.distanceAverage < 100) {
+        else if (nextProps.location.distanceAverage < 500) {
             this.setState({ loopSpeed: 100 });
         }
         else if (nextProps.location.distanceAverage < 1000) {
@@ -47,6 +50,9 @@ class LocationMarker extends Component {
         }
         else if (nextProps.location.distanceAverage < 5000) {
             this.setState({ loopSpeed: 1000 });
+        }
+        else {
+            this.setState({ loopSpeed: 2000 });
         }
     }
 
@@ -61,7 +67,6 @@ class LocationMarker extends Component {
                     longitude: this.props.location.loc[1],
                 }}
             />
-
         )
     }
 }

@@ -20,7 +20,8 @@ class MapScreen extends Component {
     onMapPressed = (e) => {
         this.setState({
             showNamePrompt: !this.showNamePrompt,
-            location: e.nativeEvent.coordinate
+            location: e.nativeEvent.coordinate,
+            markerName: `Marker ${shortid.generate()}`
         })
     }
 
@@ -38,7 +39,7 @@ class MapScreen extends Component {
                 <Prompt
                     title="Location Name"
                     placeholder="Start typing"
-                    defaultValue={`Marker ${shortid.generate()}`}
+                    defaultValue={this.state.markerName} 
                     visible={this.state.showNamePrompt}
                     onCancel={() => this.setState({
                         showNamePrompt: false,
