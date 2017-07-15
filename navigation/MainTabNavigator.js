@@ -8,14 +8,19 @@ import { TabNavigator, TabBarBottom } from 'react-navigation';
 
 import Colors from '../constants/Colors';
 
-import MapScreen from '../screens/MapScreen';
+import MapImageSwappingScreen from '../screens/MapImageSwappingScreen';
+import MapRequestAnimationFrameScreen from '../screens/MapRequestAnimationFrameScreen';
+
 import LocationsScreen from '../screens/LocationsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 export default TabNavigator(
   {
-    Map: {
-      screen: MapScreen
+    MapImageSwapping: {
+      screen: MapImageSwappingScreen
+    },
+    MapRequestAnimationFrame: {
+      screen: MapRequestAnimationFrameScreen
     },
     Locations: {
       screen: LocationsScreen
@@ -31,7 +36,10 @@ export default TabNavigator(
         const { routeName } = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Map':
+          case 'MapImageSwapping':
+            iconName = 'map';
+            break;
+          case 'MapRequestAnimationFrame':
             iconName = 'map';
             break;
           case 'Locations':
@@ -53,10 +61,10 @@ export default TabNavigator(
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     // Disable animation so that iOS/Android have same behaviors
-    animationEnabled: false,
+    animationEnabled: true,
     // Don't show the labels
     tabBarOptions: {
-      showLabel: false,
+      showLabel: true,
     },
   }
 );

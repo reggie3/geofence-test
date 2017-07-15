@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import actions from '../actions/actions';
 import Prompt from 'react-native-prompt';
 import shortid from 'shortid';
-import LocationMarker from '../components/LocationMarker';
+import LocationMarkerImageSwapping from '../components/LocationMarkerImageSwapping';
 
 class MapScreen extends Component {
 
@@ -66,12 +66,12 @@ class MapScreen extends Component {
                         longitude: this.props.currentLocation.coords.longitude ?
                             this.props.currentLocation.coords.longitude : -77.0059,
                         latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
+                        longitudeDelta: 0.0421
                     }}>
                     {
                         this.props.locations.map((location, index) => {
                             return (
-                                <LocationMarker
+                                <LocationMarkerImageSwapping
                                     key={index}
                                     pinColor={location.pinColor}
                                     location={location}

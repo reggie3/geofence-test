@@ -9,7 +9,7 @@ const monster2 = require('../assets/sprites/monster/monster_walk02.png')
 const monster3 = require('../assets/sprites/monster/monster_walk03.png')
 
 
-class LocationMarker extends Component {
+class LocationMarkerImageSwapping extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -82,5 +82,5 @@ const mapDispatchToProps = (dispatch) => {
     };
 }
 
-reactMixin(LocationMarker.prototype, TimerMixin);
-export default connect(mapStateToProps, mapDispatchToProps)(LocationMarker);
+reactMixin(LocationMarkerImageSwapping.prototype, TimerMixin);
+export default connect(mapStateToProps, mapDispatchToProps)(LocationMarkerImageSwapping);
