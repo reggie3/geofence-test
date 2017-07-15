@@ -13,6 +13,7 @@ import MapRequestAnimationFrameScreen from '../screens/MapRequestAnimationFrameS
 
 import LocationsScreen from '../screens/LocationsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import { View, Text } from 'react-native';
 
 export default TabNavigator(
   {
@@ -35,25 +36,44 @@ export default TabNavigator(
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;
         let iconName;
+        let title;
         switch (routeName) {
           case 'MapImageSwapping':
+            title = "Image Swapping";
             iconName = 'map';
             break;
           case 'MapRequestAnimationFrame':
+            title = "RequestAnimationFrame";
             iconName = 'map';
             break;
           case 'Locations':
+            title = "Locations";
             iconName = 'list';
             break;
           case 'Settings':
+            title = "Settings";
             iconName = 'cog';
         }
         return (
-          <FontAwesome
-            name={iconName}
-            size={32}
-            color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-          />
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignContent: 'center'
+            }}>
+            <FontAwesome
+              name={iconName}
+              size={30}
+              color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+            />
+            <Text
+              style={{
+                fontSize: 8,
+                color: focused ? Colors.tabIconSelected : Colors.tabIconDefault
+              }}>
+              {title}
+            </Text>
+          </View>
         );
       },
     }),
@@ -64,7 +84,7 @@ export default TabNavigator(
     animationEnabled: true,
     // Don't show the labels
     tabBarOptions: {
-      showLabel: true,
+      showLabel: false,
     },
   }
 );

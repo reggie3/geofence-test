@@ -41,10 +41,8 @@ class LocationMarkerRequestAnimationFrame extends Component {
         else{
             console.log("error");
         }
-        //console.log("size: " + newSize);
         let newGrowthSwitch = newSize >= MAX_MARKER_SIZE ? "shrink" :
             newSize <= MIN_MARKER_SIZE ? "grow" : this.state.growthSwitch;
-        //console.log("newGrowthSwitch: " + newGrowthSwitch);
 
 
         this.setState({
@@ -56,22 +54,7 @@ class LocationMarkerRequestAnimationFrame extends Component {
         this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
-    createMarkerArray = (pinColor) => {
-        let markerArray = [];
 
-        for (let i = 0; i < 10; i++) {
-            markerArray.push(
-                <FontAwesome
-                    name='map-marker'
-                    color={this.props.location.pinColor}
-                    size={this.state.size}
-                />
-            )
-        }
-        debugger;
-        return markerArray;
-
-    }
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.distanceAverage < 10) {
             this.setState({ markerGrowthSpeed: 120 });

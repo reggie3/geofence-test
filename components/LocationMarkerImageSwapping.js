@@ -23,9 +23,7 @@ class LocationMarkerImageSwapping extends Component {
 
 
     componentDidMount = () => {
-        setTimeout(
-            this.animationLooper.bind(this),
-            this.state.loopSpeed);
+        this.animationLooper();
     }
 
     animationLooper = () => {
