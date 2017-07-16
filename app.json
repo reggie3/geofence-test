@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "geofencing-proof-of-concept",
-    "description": "No description",
-    "slug": "geofencing-proof-of-concept",
+    "name": "geofencing-proof-of-concept-part1",
+    "description": "Application to go with 1st blog post",
+    "slug": "geofencing-proof-of-concept-part2",
     "privacy": "public",
     "sdkVersion": "18.0.0",
     "version": "1.0.0",

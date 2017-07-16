@@ -22,29 +22,31 @@ class AppContainer extends React.Component {
     this.initLocationServices();
     // periodically check device location and write the results to 
     // the location markers
-    setInterval(
-      this.performLocationChecking.bind(this),
-      1000);
+    this.performLocationChecking();
+
   }
 
   performLocationChecking() {
     if (this.props.appState.currentLocation.coords.latitude) {
-        let currentLoc = this.props.appState.currentLocation.coords;
-        // for each location marker, perform work in its reducer that stores the distance
-        // from the device to the location
-        this.props.locations.forEach((location) => {
-          this.props.dispatch(actions.locationsActions.writeDistanceResults(
-            location.ID,
-            geolib.getDistance(
-              { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
-              { latitude: location.loc[0], longitude: location.loc[1] },
-              this.props.config.distanceCheckAccuracy,
-              this.props.config.distanceCheckPrecision
-            ),
-            this.props.config.locationSensitivityDamping
-          ));
-        });
+      let currentLoc = this.props.appState.currentLocation.coords;
+      // for each location marker, perform work in its reducer that stores the distance
+      // from the device to the location
+      this.props.locations.forEach((location) => {
+        this.props.dispatch(actions.locationsActions.writeDistanceResults(
+          location.ID,
+          geolib.getDistance(
+            { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
+            { latitude: location.loc[0], longitude: location.loc[1] },
+            this.props.config.distanceCheckAccuracy,
+            this.props.config.distanceCheckPrecision
+          ),
+          this.props.config.locationSensitivityDamping
+        ));
+      });
     }
+    setTimeout(
+      this.performLocationChecking.bind(this),
+      this.props.config.distanceCheckInterval * 1000);
   }
 
   initLocationServices() {

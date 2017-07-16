@@ -2,7 +2,7 @@
   "name": "geofencing-proof-of-concept",
   "version": "0.0.0",
   "description": "Hello Expo!",
-  "author": null,
+  "author": "",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "test": "jest"
@@ -31,5 +31,14 @@
   },
   "devDependencies": {
     "jest-expo": "~18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reggie3/geofence-test.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reggie3/geofence-test/issues"
+  },
+  "homepage": "https://github.com/reggie3/geofence-test#readme"
 }
