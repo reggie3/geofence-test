@@ -16,13 +16,22 @@ const MAX_MARKER_SIZE = 48;
 class LocationMarker extends Component {
     constructor() {
         super()
-        this.spinValue = new Animated.Value(0)
+        this.state = {
+            spinValue: new Animated.Value(0),
+            fadeAnim: new Animated.Value(.5),
+        };
     }
     componentDidMount() {
-        this.spin()
+        console.log('mounting');
+        Animated.timing(                  // Animate over time
+            this.state.fadeAnim,            // The animated value to drive
+            {
+                toValue: 1,                   // Animate to opacity: 1 (opaque)
+                duration: 10000,              // Make it take a while
+            }
+        ).start();
     }
     spin() {
-        this.spinValue.setValue(0)
         Animated.timing(
             this.spinValue,
             {
@@ -48,11 +57,14 @@ class LocationMarker extends Component {
         }
     }
 
+    componentWillUpdate(nextProps, nextState) {
+        // perform any preparations for an upcoming update
+        console.log('******componentWillUpdate*********');
+    }
+
     render() {
-        const spin = this.spinValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0deg', '360deg']
-        });
+        let { fadeAnim } = this.state;
+        console.log({ fadeAnim });
 
         return (
             <Expo.MapView.Marker
@@ -62,7 +74,10 @@ class LocationMarker extends Component {
                     longitude: this.props.location.loc[1],
                 }}>
                 <Animated.View
-                    style={{ transform: [{ rotate: spin }] }}>
+                    style={{
+                        backgroundColor: 'black',
+                        opacity: fadeAnim,
+                    }}>
                     <FontAwesome
                         name='map-marker'
                         color={this.props.location.pinColor}

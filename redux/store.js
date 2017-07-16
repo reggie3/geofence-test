@@ -16,7 +16,7 @@ export let defaultState = {
         // to indicate to the user
         locationSensitivityDamping: 3,
         //seconds between checks
-        distanceCheckInterval: 1,
+        distanceCheckInterval: 20,
         // argument is accuracy (in meters).
         distanceCheckAccuracy: 1,
         //precision in sub-meters (1 is meter presicion, 2 is decimeters, 3 is centimeters, etc).

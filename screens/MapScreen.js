@@ -6,6 +6,8 @@ import actions from '../actions/actions';
 import Prompt from 'react-native-prompt';
 import shortid from 'shortid';
 import LocationMarker from '../components/LocationMarker';
+import TimerMixin from 'react-timer-mixin';
+const reactMixin = require('react-mixin');
 
 class MapScreen extends Component {
 
@@ -20,7 +22,8 @@ class MapScreen extends Component {
     onMapPressed = (e) => {
         this.setState({
             showNamePrompt: !this.showNamePrompt,
-            location: e.nativeEvent.coordinate
+            location: e.nativeEvent.coordinate,
+            markerName: `Marker ${shortid.generate()}`
         })
     }
 
@@ -31,6 +34,20 @@ class MapScreen extends Component {
         ));
     }
 
+    componentDidMount = () => {
+        let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
+    }
+
+    animationLooper = () => {
+        this.setState({ clock: !this.state.clock });
+        // console.log('tick');
+        this.requestAnimationFrame(this.animationLooper.bind(this));
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        // perform any preparations for an upcoming update
+        console.log("++++++++ MapScreen componentWillUpdate +++++++++++++");
+    }
     render() {
         return (
             <View
@@ -38,7 +55,7 @@ class MapScreen extends Component {
                 <Prompt
                     title="Location Name"
                     placeholder="Start typing"
-                    defaultValue={`Marker ${shortid.generate()}`}
+                    defaultValue={this.state.markerName}
                     visible={this.state.showNamePrompt}
                     onCancel={() => this.setState({
                         showNamePrompt: false,
@@ -96,4 +113,5 @@ const mapDispatchToProps = (dispatch) => {
     };
 }
 
+reactMixin(MapScreen.prototype, TimerMixin);
 export default connect(mapStateToProps, mapDispatchToProps)(MapScreen);
