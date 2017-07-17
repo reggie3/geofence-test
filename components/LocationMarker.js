@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
-    View, Animated, StyleSheet,
-    Easing
+    View, StyleSheet, Text
+
 } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 import TimerMixin from 'react-timer-mixin';
 const reactMixin = require('react-mixin');
 import { FontAwesome } from '@expo/vector-icons';
+import { Motion, spring } from 'react-motion';
 
 
 
@@ -17,29 +18,8 @@ class LocationMarker extends Component {
     constructor() {
         super()
         this.state = {
-            spinValue: new Animated.Value(0),
-            fadeAnim: new Animated.Value(.5),
+            fadeIn: true
         };
-    }
-    componentDidMount() {
-        console.log('mounting');
-        Animated.timing(                  // Animate over time
-            this.state.fadeAnim,            // The animated value to drive
-            {
-                toValue: 1,                   // Animate to opacity: 1 (opaque)
-                duration: 10000,              // Make it take a while
-            }
-        ).start();
-    }
-    spin() {
-        Animated.timing(
-            this.spinValue,
-            {
-                toValue: 1,
-                duration: 1000,
-                easing: Easing.linear
-            }
-        ).start(() => this.spin())
     }
 
     componentWillReceiveProps(nextProps) {
@@ -59,13 +39,15 @@ class LocationMarker extends Component {
 
     componentWillUpdate(nextProps, nextState) {
         // perform any preparations for an upcoming update
-        console.log('******componentWillUpdate*********');
+        // console.log('******componentWillUpdate*********');
+    }
+    animationComplete() {
+        debugger;
+        this.setState({ fadeIn: !this.state.fadeIn })
     }
 
     render() {
-        let { fadeAnim } = this.state;
-        console.log({ fadeAnim });
-
+        console.log('render marker');
         return (
             <Expo.MapView.Marker
                 key={this.props.key}
@@ -73,17 +55,26 @@ class LocationMarker extends Component {
                     latitude: this.props.location.loc[0],
                     longitude: this.props.location.loc[1],
                 }}>
-                <Animated.View
+                <Motion
                     style={{
-                        backgroundColor: 'black',
-                        opacity: fadeAnim,
-                    }}>
-                    <FontAwesome
-                        name='map-marker'
-                        color={this.props.location.pinColor}
-                        size={32}
-                    />
-                </Animated.View>
+                        fade: spring(this.state.fadeIn ? 1 : 0)
+                    }}
+                    onRest={this.animationComplete.bind(this)}
+                    >
+                    {({ fade }) =>
+                        <View
+                            style={{
+                                opacity: fade
+                            }}>
+                            <Text>{fade}</Text>
+                            <FontAwesome
+                                name='map-marker'
+                                color={this.props.location.pinColor}
+                                size={32}
+                            />
+                        </View>
+                    }
+                </Motion>
             </Expo.MapView.Marker>
         )
     }

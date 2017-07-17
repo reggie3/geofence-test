@@ -46,9 +46,10 @@ class MapScreen extends Component {
 
     componentWillUpdate(nextProps, nextState) {
         // perform any preparations for an upcoming update
-        console.log("++++++++ MapScreen componentWillUpdate +++++++++++++");
+        // console.log("++++++++ MapScreen componentWillUpdate +++++++++++++");
     }
     render() {
+        console.log('render mapScreen');
         return (
             <View
                 style={{ flex: 1 }}>
