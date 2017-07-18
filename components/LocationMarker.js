@@ -8,8 +8,7 @@ import { connect } from 'react-redux';
 import TimerMixin from 'react-timer-mixin';
 const reactMixin = require('react-mixin');
 import { FontAwesome } from '@expo/vector-icons';
-import { Entrance } from 'animate-components';
-
+import * as Animatable from 'react-native-animatable';
 
 
 class LocationMarker extends Component {
@@ -22,7 +21,7 @@ class LocationMarker extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        this.setState({ timeLastCalled: nextProps.time })
 
         let time = 20000;   //time to complete the animation
         if (nextProps.location.distanceAverage < 10) {
@@ -62,6 +61,7 @@ class LocationMarker extends Component {
 
     render() {
         console.log('***** render maker *****');
+        debugger;
         return (
             <Expo.MapView.Marker
                 key={this.props.key}
@@ -70,14 +70,13 @@ class LocationMarker extends Component {
                     longitude: this.props.location.loc[1],
                 }}
                 time={this.props.time}>
-                <Entrance duration='4s' timingFunction='ease-in' as='h1'>
-                    <FontAwesome
-                        name='map-marker'
-                        color={this.props.location.pinColor}
-                        size={this.state.size}
-                        backgroundColor='blue'
-                    />
-                </Entrance>
+                <Animatable.Text
+                    animation="pulse"
+                    easing="ease-out"
+                    iterationCount="infinite"
+                    style={{ textAlign: 'center' }}>
+                    ❤️
+                    </Animatable.Text>
             </Expo.MapView.Marker>
         )
     }
