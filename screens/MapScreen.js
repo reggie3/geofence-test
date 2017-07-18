@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import Expo from 'expo';
 import { connect } from 'react-redux';
 import actions from '../actions/actions';
@@ -9,6 +9,10 @@ import LocationMarker from '../components/LocationMarker';
 import TimerMixin from 'react-timer-mixin';
 const reactMixin = require('react-mixin');
 
+// hack from https://github.com/airbnb/react-native-maps/issues/1332 to
+// force showsMyLocationButton to display
+const { width, height } = Dimensions.get('window');
+
 class MapScreen extends Component {
 
     constructor(props) {
@@ -16,7 +20,9 @@ class MapScreen extends Component {
         this.state = {
             showNamePrompt: false,
             location: undefined,
-            name: undefined
+            name: undefined,
+            lastFrameTime: Date.now(),
+            hackHeight: height
         };
     }
     onMapPressed = (e) => {
@@ -34,22 +40,22 @@ class MapScreen extends Component {
         ));
     }
 
+    componentWillMount() {
+        setTimeout( () => this.setState({ hackHeight: height+1}), 500);
+        setTimeout( () => this.setState({ hackHeight: height}), 1000);
+    }
     componentDidMount = () => {
         let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
     animationLooper = () => {
-        this.setState({ clock: !this.state.clock });
+        this.setState({ lastFrameTime: Date.now() });
         // console.log('tick');
         this.requestAnimationFrame(this.animationLooper.bind(this));
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        // perform any preparations for an upcoming update
-        // console.log("++++++++ MapScreen componentWillUpdate +++++++++++++");
-    }
+
     render() {
-        console.log('render mapScreen');
         return (
             <View
                 style={{ flex: 1 }}>
@@ -69,7 +75,9 @@ class MapScreen extends Component {
                     }} />
                 <Expo.MapView
                     style={{
-                        flex: 1
+                        flex: 1,
+                        top: 0,
+                        paddingBottom: this.state.hackHeight
                     }}
                     provider="google"
                     showsUserLocation={true}
@@ -92,6 +100,7 @@ class MapScreen extends Component {
                                     key={index}
                                     pinColor={location.pinColor}
                                     location={location}
+                                    time={this.state.lastFrameTime}
                                 />
                             )
                         })
@@ -105,7 +114,7 @@ class MapScreen extends Component {
 const mapStateToProps = (state) => {
     return Object.assign({}, {
         locations: state.locations,
-        currentLocation: state.appState.currentLocation
+        currentLocation: state.appState.currentLocation,
     });
 }
 const mapDispatchToProps = (dispatch) => {

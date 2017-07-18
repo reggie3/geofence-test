@@ -24,7 +24,7 @@ class AppContainer extends React.Component {
     // the location markers
     setInterval(
       this.performLocationChecking.bind(this),
-      1000);
+      this.props.config.distanceCheckInterval * 1000);
   }
 
   performLocationChecking() {

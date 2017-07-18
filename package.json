@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@expo/samples": "~1.0.4",
+    "@tweenjs/tween.js": "^16.8.0",
     "expo": "^18.0.4",
     "geolib": "^2.0.22",
     "guid": "0.0.12",
