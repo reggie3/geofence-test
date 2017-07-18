@@ -9,14 +9,20 @@ import TimerMixin from 'react-timer-mixin';
 const reactMixin = require('react-mixin');
 import { FontAwesome } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
+const TWEEN = require('@tweenjs/tween.js');
+
+
+var position = { x: 0 }; // Start at (0, 0)
+let tween = new TWEEN.Tween(position); // Create a new tween that modifies 'coords'.
+
+
 
 
 class LocationMarker extends Component {
     constructor() {
-        super()
+        super();
         this.state = {
             timeLastCalled: Date.now(),
-
         };
     }
 
@@ -39,28 +45,24 @@ class LocationMarker extends Component {
         else {
             time = 16000;
         }
-
+        tween.to({ x: 200 }, time);
     }
 
-    componentDidMount() {
-        debugger;
-        let currentLoc = this.props.currentLoc;
-        let location = this.props.location;
+    componentDidMount = () => {
+        let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
+        tween.onUpdate(function () {
+            console.log(position.x);
+        });
+        tween.start();
+    }
 
-        this.props.dispatch(actions.locationsActions.writeDistanceResults(
-            location.ID,
-            geolib.getDistance(
-                { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
-                { latitude: location.loc[0], longitude: location.loc[1] },
-                this.props.config.distanceCheckAccuracy,
-                this.props.config.distanceCheckPrecision
-            ),
-            this.props.config.locationSensitivityDamping
-        ));
+    animationLooper = () => {
+        requestAnimationFrame(this.animationLooper);
+        TWEEN.update();
     }
 
     render() {
-        console.log('***** render maker *****');
+        // console.log('***** render maker *****');
         debugger;
         return (
             <Expo.MapView.Marker
