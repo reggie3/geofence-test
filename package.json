@@ -13,6 +13,8 @@
   "dependencies": {
     "@expo/samples": "~1.0.4",
     "@tweenjs/tween.js": "^16.8.0",
+    "animate-components": "^1.4.2",
+    "animate-keyframes": "^0.1.5",
     "expo": "^18.0.4",
     "geolib": "^2.0.22",
     "guid": "0.0.12",

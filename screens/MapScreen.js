@@ -90,8 +90,8 @@ class MapScreen extends Component {
                             this.props.currentLocation.coords.latitude : 38.889931,
                         longitude: this.props.currentLocation.coords.longitude ?
                             this.props.currentLocation.coords.longitude : -77.0059,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
+                        latitudeDelta: 0.00922,
+                        longitudeDelta: 0.00421,
                     }}>
                     {
                         this.props.locations.map((location, index) => {
