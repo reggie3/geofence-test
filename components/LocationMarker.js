@@ -16,6 +16,16 @@ const TWEEN = require('@tweenjs/tween.js');
 
 const SCALE_MIN = 16;
 const SCALE_MAX = 24;
+const BOUNCE_MIN = 0;
+const BOUNCE_MAX = 8;
+const SHADOWX_MIN = 1.5;
+const SHADOWX_MAX = 3.5;
+const SHADOWY_MIN = .75;
+const SHADOWY_MAX = 1.2;
+const SHADOW_OPACITY_MIN = .3;
+const SHADOW_OPACITY_MAX = .6;
+const IMAGEX_SCALE_MIN = .8;
+const IMAGEX_SCALE_MAX = 1.3;
 class LocationMarker extends Component {
     constructor() {
         super();
@@ -23,13 +33,17 @@ class LocationMarker extends Component {
             timeLastCalled: Date.now(),
             duration: 16000,
             tweenRunning: false,
-
         };
     }
 
     componentWillMount() {
         this.tweenVars = {
-            scale: SCALE_MIN
+            scale: SCALE_MIN,
+            bounce: BOUNCE_MIN,
+            shadowScaleX: SHADOWX_MIN,
+            shadowScaleY: SHADOWY_MIN,
+            shadowOpacity: SHADOW_OPACITY_MIN,
+            imageXScale: IMAGEX_SCALE_MIN
         };
         this.tween = new TWEEN.Tween(this.tweenVars);
     }
@@ -78,12 +92,19 @@ class LocationMarker extends Component {
     checkTweenStatus() {
         if (!this.state.tweenRunning) {
             let that = this;
-            this.tween.to({ scale: SCALE_MAX }, that.state.duration)
+            this.tween.to({
+                scale: SCALE_MAX,
+                bounce: BOUNCE_MAX,
+                shadowScaleX: SHADOWX_MAX,
+                shadowScaleY: SHADOWY_MAX,
+                shadowOpacity: SHADOW_OPACITY_MAX,
+                imageXScale: IMAGEX_SCALE_MAX
+            }, that.state.duration)
                 .yoyo(true)
                 .repeat(1)
-                .easing(TWEEN.Easing.Elastic.InOut)
+                .easing(TWEEN.Easing.Back.InOut)
                 .onUpdate(function () {
-                    console.log(that.tweenVars.scale);
+                    //console.log(that.tweenVars.scale);
                 });
             this.tween.onStart(() => {
                 that.setState({ tweenRunning: true })
@@ -110,13 +131,45 @@ class LocationMarker extends Component {
                     longitude: this.props.location.loc[1],
                 }}
                 time={this.props.time}>
-                <Text
+                <View
                     style={{
-                        textAlign: 'center',
-                        fontSize: this.tweenVars.scale
+                        display: 'flex',
+                        padding: 0,
+                        margin: 0,
+                        flexDirection: 'column',
+                        justifyContent: 'center'
                     }}>
-                    ❤️
+
+                    <Text
+                        style={{
+                            padding: 0,
+                            margin: 0,
+                            fontSize: this.tweenVars.scale
+                        }}>
+                        ❤️
                     </Text>
+                    <View
+                        style={{
+                            padding: 0,
+                            margin: 0,
+                            borderBottomWidth: this.tweenVars.bounce,
+                            borderColor: 'rgba(0,0,0,0)'
+                        }}>
+                    </View>
+                    <View
+                        style={{
+                            height: 2,
+                            width: 4,
+                            borderRadius: 50,
+                            alignSelf: 'center',
+                            transform: [
+                                { scaleX: this.tweenVars.shadowScaleX },
+                                { scaleY: this.tweenVars.shadowScaleY }
+                            ],
+                            backgroundColor: `rgba(50,50,50,${this.tweenVars.shadowOpacity})`
+                        }}>
+                    </View>
+                </View>
             </Expo.MapView.Marker>
         )
     }
