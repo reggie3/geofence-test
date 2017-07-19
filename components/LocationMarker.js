@@ -12,58 +12,96 @@ import * as Animatable from 'react-native-animatable';
 const TWEEN = require('@tweenjs/tween.js');
 
 
-var position = { x: 0 }; // Start at (0, 0)
-let tween = new TWEEN.Tween(position); // Create a new tween that modifies 'coords'.
 
 
-
-
+const SCALE_MIN = 16;
+const SCALE_MAX = 24;
 class LocationMarker extends Component {
     constructor() {
         super();
         this.state = {
             timeLastCalled: Date.now(),
+            duration: 16000,
+            tweenRunning: false,
+
         };
+    }
+
+    componentWillMount() {
+        this.tweenVars = {
+            scale: SCALE_MIN
+        };
+        this.tween = new TWEEN.Tween(this.tweenVars);
+    }
+
+    componentDidMount = () => {
+        let currentLoc = this.props.currentLoc;
+        let location = this.props.location;
+
+        this.props.dispatch(actions.locationsActions.writeDistanceResults(
+            location.ID,
+            geolib.getDistance(
+                { latitude: currentLoc.latitude, longitude: currentLoc.longitude },
+                { latitude: location.loc[0], longitude: location.loc[1] },
+                this.props.config.distanceCheckAccuracy,
+                this.props.config.distanceCheckPrecision
+            ),
+            this.props.config.locationSensitivityDamping
+        ));
+        let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
+
+    }
+
+    animationLooper = () => {
+        TWEEN.update();
+        this.checkTweenStatus();
+        requestAnimationFrame(this.animationLooper);
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({ timeLastCalled: nextProps.time })
 
-        let time = 20000;   //time to complete the animation
         if (nextProps.location.distanceAverage < 10) {
-            time = 500;
+            this.setState({ duration: 250 });
         }
         else if (nextProps.location.distanceAverage < 100) {
-            time = 1000;
+            this.setState({ duration: 500 });
         }
         else if (nextProps.location.distanceAverage < 500) {
-            time = 4000;
+            this.setState({ duration: 1000 });
         }
         else if (nextProps.location.distanceAverage < 1000) {
-            time = 8000;
+            this.setState({ duration: 2000 });
         }
-        else {
-            time = 16000;
-        }
-        tween.to({ x: 200 }, time);
     }
 
-    componentDidMount = () => {
-        let animation = this.requestAnimationFrame(this.animationLooper.bind(this));
-        tween.onUpdate(function () {
-            console.log(position.x);
+    checkTweenStatus() {
+        if (!this.state.tweenRunning) {
+            let that = this;
+            this.tween.to({ scale: SCALE_MAX }, that.state.duration)
+                .yoyo(true)
+                .repeat(1)
+                .easing(TWEEN.Easing.Elastic.InOut)
+                .onUpdate(function () {
+                    console.log(that.tweenVars.scale);
+                });
+            this.tween.onStart(() => {
+                that.setState({ tweenRunning: true })
+            });
+            this.tween.onComplete(() => {
+                that.onTweenComplete();
+            });
+            this.tween.start();
+        }
+    }
+
+    onTweenComplete() {
+        this.setState({
+            tweenRunning: false,
         });
-        tween.start();
-    }
-
-    animationLooper = () => {
-        requestAnimationFrame(this.animationLooper);
-        TWEEN.update();
     }
 
     render() {
-        // console.log('***** render maker *****');
-        debugger;
         return (
             <Expo.MapView.Marker
                 key={this.props.key}
@@ -72,13 +110,13 @@ class LocationMarker extends Component {
                     longitude: this.props.location.loc[1],
                 }}
                 time={this.props.time}>
-                <Animatable.Text
-                    animation="pulse"
-                    easing="ease-out"
-                    iterationCount="infinite"
-                    style={{ textAlign: 'center' }}>
+                <Text
+                    style={{
+                        textAlign: 'center',
+                        fontSize: this.tweenVars.scale
+                    }}>
                     ❤️
-                    </Animatable.Text>
+                    </Text>
             </Expo.MapView.Marker>
         )
     }
